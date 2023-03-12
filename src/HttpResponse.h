@@ -232,7 +232,7 @@ public:
 #endif
 
     /* Manually upgrade to WebSocket. Typically called in upgrade handler. Immediately calls open handler.
-     * NOTE: Will invalidate 'this' as socket might change location in memory. Throw away aftert use. */
+     * NOTE: Will invalidate 'this' as socket might change location in memory. Throw away after use. */
     template <typename UserData>
     void upgrade(UserData &&userData, std::string_view secWebSocketKey, std::string_view secWebSocketProtocol,
             std::string_view secWebSocketExtensions,
@@ -422,7 +422,7 @@ public:
     /* End without a body (no content-length) or end with a spoofed content-length. */
     void endWithoutBody(std::optional<size_t> reportedContentLength = std::nullopt, bool closeConnection = false) {
         if (reportedContentLength.has_value()) {
-            //internalEnd({nullptr, 0}, reportedContentLength.value(), false, true, closeConnection);
+            internalEnd({nullptr, 0}, reportedContentLength.value(), false, true, closeConnection);
         } else {
             internalEnd({nullptr, 0}, 0, false, false, closeConnection);
         }
