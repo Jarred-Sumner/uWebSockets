@@ -21,6 +21,7 @@
 #include <string>
 #include <charconv>
 #include <string_view>
+#include "libusockets.h"
 
 namespace uWS {
     /* Safari 15.0 - 15.3 has a completely broken compression implementation (client_no_context_takeover not
@@ -559,6 +560,18 @@ public:
     /* Port, options, callback */
     TemplatedApp &&listen(int port, int options, MoveOnlyFunction<void(us_listen_socket_t *)> &&handler) {
         handler(httpContext ? httpContext->listen(nullptr, port, options) : nullptr);
+        return std::move(*this);
+    }
+    
+    /* callback, fd */
+    TemplatedApp &&listen(MoveOnlyFunction<void(us_listen_socket_t *)> &&handler, LIBUS_SOCKET_DESCRIPTOR fd) {
+        handler(httpContext ? httpContext->listen(fd, 0) : nullptr);
+        return std::move(*this);
+    }
+    
+    /* options, callback, fd */
+    TemplatedApp &&listen(int options, MoveOnlyFunction<void(us_listen_socket_t *)> &&handler, LIBUS_SOCKET_DESCRIPTOR fd) {
+        handler(httpContext ? httpContext->listen(fd, options) : nullptr);
         return std::move(*this);
     }
 

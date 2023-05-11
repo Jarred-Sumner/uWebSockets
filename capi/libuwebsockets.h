@@ -90,7 +90,7 @@ extern "C"
 
     DLL_EXPORT typedef struct
     {
-
+        LIBUS_SOCKET_DESCRIPTOR fd;
         int port;
         const char *host;
         int options;
