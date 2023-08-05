@@ -332,17 +332,36 @@ extern "C"
 
     void uws_app_listen_with_config(int ssl, uws_app_t *app, uws_app_listen_config_t config, uws_listen_handler handler, void *user_data)
     {
+        /* branching is getting untidy */
         if (ssl)
         {
             uWS::SSLApp *uwsApp = (uWS::SSLApp *)app;
-            uwsApp->listen(config.host, config.port, config.options, [handler, config, user_data](struct us_listen_socket_t *listen_socket)
-                           { handler((struct us_listen_socket_t *)listen_socket, config, user_data); });
+            if (config.fd) {
+                uwsApp->listen(
+                    config.options,
+                    [handler, config, user_data](struct us_listen_socket_t *listen_socket) {
+                        handler((struct us_listen_socket_t *)listen_socket, config, user_data);
+                    },
+                    config.fd);
+            } else {
+                uwsApp->listen(config.host, config.port, config.options, [handler, config, user_data](struct us_listen_socket_t *listen_socket)
+                               { handler((struct us_listen_socket_t *)listen_socket, config, user_data); });
+            }
         }
         else
         {
             uWS::App *uwsApp = (uWS::App *)app;
-            uwsApp->listen(config.host, config.port, config.options, [handler, config, user_data](struct us_listen_socket_t *listen_socket)
-                           { handler((struct us_listen_socket_t *)listen_socket, config, user_data); });
+            if (config.fd) {
+                uwsApp->listen(
+                    config.options,
+                    [handler, config, user_data](struct us_listen_socket_t *listen_socket) {
+                        handler((struct us_listen_socket_t *)listen_socket, config, user_data);
+                    },
+                    config.fd);
+            } else {
+                uwsApp->listen(config.host, config.port, config.options, [handler, config, user_data](struct us_listen_socket_t *listen_socket)
+                               { handler((struct us_listen_socket_t *)listen_socket, config, user_data); });
+            }
         }
     }
 

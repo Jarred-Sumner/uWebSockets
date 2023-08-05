@@ -25,6 +25,7 @@
 #include "HttpResponseData.h"
 #include "AsyncSocket.h"
 #include "WebSocketData.h"
+#include "libusockets.h"
 
 #include <string_view>
 #include <iostream>
@@ -466,6 +467,12 @@ public:
     us_listen_socket_t *listen(const char *path, int options) {
         return us_socket_context_listen_unix(SSL, getSocketContext(), path, options, sizeof(HttpResponseData<SSL>));
     }
+
+    /* Attach to bound and listening socket (fd) using this HttpContext */
+    us_listen_socket_t *listen(LIBUS_SOCKET_DESCRIPTOR fd, int options) {
+        return us_socket_context_listen_direct(SSL, getSocketContext(), fd, options, sizeof(HttpResponseData<SSL>));
+    }
+
 };
 
 }
